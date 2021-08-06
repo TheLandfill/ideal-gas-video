@@ -1,0 +1,21 @@
+In some upcoming videos, I want to talk about practical applications of entropy.
+I have decided to focus on an ideal gas, a gas where each particle acts
+indpendently of all other particles. Focusing on such a gas can make our lives
+much easier since we can figure out a pattern for one particle, then apply it to
+all the particles.
+
+So, what does it mean for each particle to be independent of all other
+particles? In practice, it means two things:
+
+1.	Particles take up zero space. The more space each particle takes up, the
+	less space particles have to move. In the extreme case, the particles take
+	up so much space that you no longer have a gas, but a liquid or a solid
+	under extremely high pressure.
+2.	Particles do not interact. With real gases, particles tend to want to stick
+	together as a net result of the intermolecular forces, which include
+	hydrogen bonds and van der Waals forces. In the extreme case, you again end
+	up with liquids or solids.
+
+While both of these requirements may seem too restrictive to apply to any real
+gases, the ideal gas model approximates many gases quite well over a wide range
+of temperatures, pressures, and volumes.
