@@ -56,6 +56,11 @@ void Particle<N>::add_elastic_impulse(Particle<N>& o) {
 }
 
 template<size_t N>
+void Particle<N>::add_boundary(Vector<N>& v) {
+	
+}
+
+template<size_t N>
 real Particle<N>::get_greatest_point(size_t dim) const {
 	return x[dim] + radius;
 }

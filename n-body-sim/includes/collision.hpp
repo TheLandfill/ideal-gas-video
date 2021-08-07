@@ -22,6 +22,7 @@ public:
 	void remove_particles(std::vector<size_t>& indices);
 private:
 	void broad_collision_detection(const std::vector<Particle<N>>& particles);
+	void strict_collision_detection(std::vector<Particle<N>>& particles);
 	void sweep_and_prune(const std::vector<Particle<N>>& particles);
 	void update_pos(const std::vector<Particle<N>>& particles);
 	void select_random_index();
@@ -43,6 +44,11 @@ template<size_t N>
 void Collision<N>::handle_collisions(std::vector<Particle<N>>& particles) {
 	possible_collisions.clear();
 	broad_collision_detection(particles);
+	strict_collision_detection(particles);
+}
+
+template<size_t N>
+void Collision<N>::strict_collision_detection(std::vector<Particle<N>>& particles) {
 	for (const auto& pc : possible_collisions) {
 		Particle<N>& a = particles[pc.a];
 		Particle<N>& b = particles[pc.b];
@@ -171,7 +177,9 @@ void Collision<N>::select_random_index() {
 			max_element = num_collisions_first_pass[i];
 		}
 	}
-	max_element *= 1.5;
+	max_element += 1;
+	max_element *= 3;
+	max_element /= 2;
 	size_t max_value = 0;
 	std::array<size_t, N> rand_array;
 	size_t rand_offset = rand.get_rand() % N;

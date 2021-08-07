@@ -11,7 +11,7 @@ namespace n_body {
 template<size_t N>
 class Particle_Manager {
 public:
-	Particle_Manager(std::function<void(Particle<N>&, Particle<N>&)> force_func);
+	Particle_Manager(std::function<void(Particle<N>&, Particle<N>&)> force_func, Vector<N> boundary_rectangle);
 	void create_particle(const real radius, const real inverse_mass, const Vector<N>& pos, const Vector<N>& vel = {});
 	void iterate(real delta_t);
 	void remove_particle(size_t index);
@@ -20,14 +20,16 @@ public:
 private:
 	void apply_forces();
 	void handle_collisions();
+	void handle_boundary_collisions();
 private:
+	Vector<N> boundary_rectangle;
 	std::function<void(Particle<N>&, Particle<N>&)> force;
 	std::vector<Particle<N>> particles;
 	Collision<N> collision_handler;
 };
 
 template<size_t N>
-Particle_Manager<N>::Particle_Manager(std::function<void(Particle<N>&, Particle<N>&)> force_func) : force(force_func) {}
+Particle_Manager<N>::Particle_Manager(std::function<void(Particle<N>&, Particle<N>&)> force_func, Vector<N> br) : force(force_func), boundary_rectangle(br) {}
 
 template<size_t N>
 void Particle_Manager<N>::create_particle(const real radius, const real inverse_mass, const Vector<N>& pos, const Vector<N>& vel) {
@@ -43,6 +45,7 @@ void Particle_Manager<N>::iterate(real delta_t) {
 		particle.iterate(delta_t);
 	}
 	handle_collisions();
+	handle_boundary_collisions();
 }
 
 template<size_t N>
@@ -97,6 +100,20 @@ void Particle_Manager<N>::apply_forces() {
 template<size_t N>
 void Particle_Manager<N>::handle_collisions() {
 	collision_handler.handle_collisions(particles);
+}
+
+template<size_t N>
+void Particle_Manager<N>::handle_boundary_collisions() {
+	for (auto& p : particles) {
+		for (size_t i = 0; i < N; i++) {
+			if (p.get_smallest_point(i) <= -boundary_rectangle[i]
+				|| p.get_greatest_point(i) >= boundary_rectangle[i]
+			) {
+				p.v[i] *= -1.0;
+				std::cout << "[" << &p << "] collided with boundary " << i << ".\n";
+			}
+		}
+	}
 }
 
 }
