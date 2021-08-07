@@ -21,10 +21,11 @@ private:
 	void apply_forces();
 	void handle_collisions();
 	void handle_boundary_collisions();
-private:
+public:
 	Vector<N> boundary_rectangle;
 	std::function<void(Particle<N>&, Particle<N>&)> force;
 	std::vector<Particle<N>> particles;
+private:
 	Collision<N> collision_handler;
 };
 
@@ -110,7 +111,7 @@ void Particle_Manager<N>::handle_boundary_collisions() {
 				|| p.get_greatest_point(i) >= boundary_rectangle[i]
 			) {
 				p.v[i] *= -1.0;
-				std::cout << "[" << &p << "] collided with boundary " << i << ".\n";
+				//std::cout << "[" << &p << "] collided with boundary " << i << ".\n";
 			}
 		}
 	}

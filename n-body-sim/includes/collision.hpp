@@ -52,12 +52,19 @@ void Collision<N>::strict_collision_detection(std::vector<Particle<N>>& particle
 	for (const auto& pc : possible_collisions) {
 		Particle<N>& a = particles[pc.a];
 		Particle<N>& b = particles[pc.b];
-		real sqr_dist = (a.x - b.x).sqr_magnitude();
+		Vector<N> dir = a.x - b.x;
+		real sqr_dist = dir.sqr_magnitude();
 		real radius_sum = a.get_radius() + b.get_radius();
-		radius_sum *= radius_sum;
-		if (radius_sum >= sqr_dist) {
+		real radius_sum_sqr = radius_sum * radius_sum;
+		if (radius_sum_sqr >= sqr_dist) {
+			a.move_back_to_last_x();
+			b.move_back_to_last_x();
 			a.add_elastic_impulse(b);
-			std::cout << "Collision happened!\n";
+			real dist = sqrt(sqr_dist);
+			dir.normalize();
+			dir *= (radius_sum - dist) / 2.0;
+			a.x += dir;
+			b.x -= dir;
 		}
 	}
 }
@@ -85,9 +92,6 @@ void Collision<N>::remove_particles(std::vector<size_t>& indices) {
 template<size_t N>
 void Collision<N>::broad_collision_detection(const std::vector<Particle<N>>& particles) {
 	sweep_and_prune(particles);
-	if (!possible_collisions.empty()) {
-		std::cout << "Broad collision detected!\n";
-	}
 }
 
 template<size_t N>
@@ -139,13 +143,16 @@ void Collision<N>::sweep_and_prune(const std::vector<Particle<N>>& particles) {
 	}
 	size_t offset = 0;
 	for (size_t i = 0; i < possible_collisions.size(); i++) {
-		if (offset >= collisions_to_remove.size() || i == collisions_to_remove[offset]) {
+		if (offset < collisions_to_remove.size() && i == collisions_to_remove[offset]) {
 			offset++;
 			continue;
 		}
 		possible_collisions[i - offset] = possible_collisions[i];
 	}
 	possible_collisions.resize(possible_collisions.size() - collisions_to_remove.size());
+	if ((rand.get_rand() & 0b11111111) == 0) {
+		std::cout << possible_collisions.size() << "\n";
+	}
 	select_random_index();
 }
 
@@ -187,6 +194,8 @@ void Collision<N>::select_random_index() {
 		rand_array[(i + rand_offset) % N] = max_element - num_collisions_first_pass[i];
 		max_value += rand_array[(i + rand_offset) % N];
 	}
+	rand_array[(cur_index + rand_offset) % N] += max_value;
+	max_value *= 2;
 	size_t index = rand.get_rand() % max_value;
 	index += 1;
 	size_t cur_step = 0;

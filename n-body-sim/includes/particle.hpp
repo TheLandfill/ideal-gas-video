@@ -20,10 +20,13 @@ public:
 	real get_smallest_point(size_t dim) const;
 	// Used for full collision
 	real get_radius() const;
+	// Used to undo a move
+	void move_back_to_last_x();
 public:
 	Vector<N> x;
 	Vector<N> v;
 private:
+	Vector<N> last_x;
 	real radius = 1.0;
 	Vector<N> accumulated_force;
 	real inverse_mass = 1.0;
@@ -34,6 +37,7 @@ Particle<N>::Particle(real r, real inv_m) : radius(r), inverse_mass(inv_m) {}
 
 template<size_t N>
 void Particle<N>::iterate(real delta_t) {
+	last_x = x;
 	auto acceleration = accumulated_force * inverse_mass;
 	v += acceleration * delta_t;
 	x += v * delta_t;
@@ -73,6 +77,11 @@ real Particle<N>::get_smallest_point(size_t dim) const {
 template<size_t N>
 real Particle<N>::get_radius() const {
 	return radius;
+}
+
+template<size_t N>
+void Particle<N>::move_back_to_last_x() {
+	x = last_x;
 }
 
 }

@@ -1,0 +1,3 @@
+[submodule "n-body-sim/vendors/olc_pixel_game_engine"]
+	path = n-body-sim/vendors/olc_pixel_game_engine
+	url = https://github.com/TheLandfill/olcPixelGameEngine.git

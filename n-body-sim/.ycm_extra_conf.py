@@ -40,6 +40,7 @@ flags = [
     '-Wextra',
     '-std=c++17',
     '-I', '/home/joseph/Documents/youtube/ideal-gas/n-body-sim/includes/',
+    '-I', '/home/joseph/Documents/youtube/ideal-gas/n-body-sim/vendors/olc_pixel_game_engine/',
 ]
 
 
