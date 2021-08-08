@@ -110,8 +110,15 @@ void Particle_Manager<N>::handle_boundary_collisions() {
 			if (p.get_smallest_point(i) <= -boundary_rectangle[i]
 				|| p.get_greatest_point(i) >= boundary_rectangle[i]
 			) {
+				p.move_back_to_last_x();
 				p.v[i] *= -1.0;
 				//std::cout << "[" << &p << "] collided with boundary " << i << ".\n";
+			}
+			if (p.get_smallest_point(i) <= -boundary_rectangle[i]) {
+				p.x[i] += 0.01;
+			}
+			if (p.get_greatest_point(i) >= boundary_rectangle[i]) {
+				p.x[i] -= 0.01;
 			}
 		}
 	}

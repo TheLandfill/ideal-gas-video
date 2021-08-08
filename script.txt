@@ -1,8 +1,8 @@
 In some upcoming videos, I want to talk about practical applications of entropy.
 I have decided to focus on an ideal gas, a gas where each particle acts
-indpendently of all other particles. Focusing on such a gas can make our lives
-much easier since we can figure out a pattern for one particle, then apply it to
-all the particles.
+independently of all other particles. Focusing on such a gas can make our lives
+much easier since we can figure out a pattern for one particle, then apply it
+to all the particles.
 
 So, what does it mean for each particle to be independent of all other
 particles? In practice, it means two things:
@@ -18,4 +18,5 @@ particles? In practice, it means two things:
 
 While both of these requirements may seem too restrictive to apply to any real
 gases, the ideal gas model approximates many gases quite well over a wide range
-of temperatures, pressures, and volumes.
+of temperatures, pressures, and volumes, and will serve as a starting point to
+talk about thermodynamics.

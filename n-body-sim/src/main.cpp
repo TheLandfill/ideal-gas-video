@@ -40,27 +40,85 @@ public:
 	}
 
 	bool OnUserCreate() override {
+		for (int i = 0; i < 5; i++) {
+			DrawLine(i, i, ScreenWidth() - 1 - i, i, {220, 20, 60});
+			DrawLine(i, i, i, ScreenHeight() - 1 - i, {220, 20, 60});
+			DrawLine(ScreenWidth() - 1 - i, ScreenHeight() - 1 - i, i, ScreenHeight() - 1 - i, {220, 20, 60});
+			DrawLine(ScreenWidth() - 1 - i, ScreenHeight() - 1 - i, ScreenWidth() - 1 - i, i, {220, 20, 60});
+		}
 		return true;
 	}
 
 	bool OnUserUpdate(float fElapsedTime) override {
+		if (!move) {
+			if (total_elapsed_time < 60.0) {
+				for (size_t i = 0; i < pm.particles.size(); i++) {
+					const auto& particle = pm.particles[i];
+					int x = ( (particle.x[0] / pm.boundary_rectangle[0]) + 1.0 ) / 2.0 * (ScreenWidth() - 10);
+					int y = ( (particle.x[1] / pm.boundary_rectangle[1]) + 1.0 ) / 2.0 * (ScreenHeight() - 10);
+					int r = (particle.radius / pm.boundary_rectangle[0] / 2.0) * (ScreenWidth() - 10);
+					x += 5;
+					y += 5;
+					FillCircle(x, y, r, colors[i]);
+					FillCircle(x, y, r * 0.75, olc::BLACK);
+				}
+				total_elapsed_time += fElapsedTime;
+				return true;
+			} else {
+				move = true;
+				total_elapsed_time = 0.0;
+			}
+		}
 		for (size_t i = 0; i < pm.particles.size(); i++) {
-			const auto& particle = pm.particles[i];
-			int x = ( (particle.x[0] / pm.boundary_rectangle[0]) + 1.0 ) / 2.0 * ScreenWidth();
-			int y = ( (particle.x[1] / pm.boundary_rectangle[1]) + 1.0 ) / 2.0 * ScreenHeight();
-			int radius = (particle.get_radius() / pm.boundary_rectangle[0] / 2.0) * ScreenWidth();
-			FillCircle(x, y, radius, olc::BLACK);
+			auto& particle = pm.particles[i];
+			int x = ( (particle.x[0] / pm.boundary_rectangle[0]) + 1.0 ) / 2.0 * (ScreenWidth() - 10);
+			int y = ( (particle.x[1] / pm.boundary_rectangle[1]) + 1.0 ) / 2.0 * (ScreenHeight() - 10);
+			int r = (particle.radius / pm.boundary_rectangle[0] / 2.0) * (ScreenWidth() - 10);
+			x += 5;
+			y += 5;
+			FillCircle(x, y, r, olc::BLACK);
+		}
+		if (total_elapsed_time < 22.5) {
+			;
+		} else if (total_elapsed_time < 34.0) {
+			for (auto& particle : pm.particles) {
+				if (particle.radius <= 0.75) {
+					particle.radius += fElapsedTime * 0.1 / (2.0 * sqrt(particle.radius));
+				}
+			}
+		} else if (total_elapsed_time < 46.0) {
+			for (auto& particle : pm.particles) {
+				if (particle.radius >= 0.2) {
+					particle.radius -= 0.5 * fElapsedTime / (2.0 * sqrt(particle.radius));
+				}
+				particle.v *= pow(0.125, fElapsedTime);
+			}
+			force.strength -= 15.0 * fElapsedTime;
+			force.cut_off_dist += 8.0 * fElapsedTime / (2.0 * sqrt(force.cut_off_dist));
+			pm.force = force;
+		} else {
+			if (total_elapsed_time < 46.01) {
+				std::cout << "Final phase!\n";
+			}
+			if (force.strength < 0) {
+				force.strength *= -0.125 / 4.0;
+			}
+			force.strength *= pow(0.125, fElapsedTime);
+			force.cut_off_dist *= pow(0.5, fElapsedTime);
+			pm.force = force;
 		}
 		pm.iterate(fElapsedTime);
-		//Clear(olc::BLACK);
 		for (size_t i = 0; i < pm.particles.size(); i++) {
 			const auto& particle = pm.particles[i];
-			int x = ( (particle.x[0] / pm.boundary_rectangle[0]) + 1.0 ) / 2.0 * ScreenWidth();
-			int y = ( (particle.x[1] / pm.boundary_rectangle[1]) + 1.0 ) / 2.0 * ScreenHeight();
-			int radius = (particle.get_radius() / pm.boundary_rectangle[0] / 2.0) * ScreenWidth();
-			FillCircle(x, y, radius, colors[i]);
-			FillCircle(x, y, radius * 0.75, olc::BLACK);
+			int x = ( (particle.x[0] / pm.boundary_rectangle[0]) + 1.0 ) / 2.0 * (ScreenWidth() - 10);
+			int y = ( (particle.x[1] / pm.boundary_rectangle[1]) + 1.0 ) / 2.0 * (ScreenHeight() - 10);
+			int r = (particle.radius / pm.boundary_rectangle[0] / 2.0) * (ScreenWidth() - 10);
+			x += 5;
+			y += 5;
+			FillCircle(x, y, r, colors[i]);
+			FillCircle(x, y, r * 0.75, olc::BLACK);
 		}
+		total_elapsed_time += fElapsedTime;
 		return true;
 	}
 private:
@@ -70,6 +128,8 @@ private:
 	float y_range;
 	n_body::Particle_Manager<2> pm;
 	std::vector<olc::Pixel> colors;
+	double total_elapsed_time = 0.0;
+	bool move = false;
 };
 
 int main() {

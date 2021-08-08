@@ -9,7 +9,7 @@ class Basic_Particle_Force {
 public:
 	Basic_Particle_Force(real strength, real offset, real cut_off_dist, size_t power);
 	void operator()(Particle<N>& a, Particle<N>& b);
-private:
+public:
 	real strength;
 	real offset;
 	real cut_off_dist;

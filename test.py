@@ -486,4 +486,44 @@ class See_Description_For_More_Info(Scene):
         self.play(Create(message[1]))
         self.wait(5)
 
+class Definition_of_Ideal_Gas(Scene):
+    def construct(self):
+        ft = [
+            MarkupText(f'What Makes a Gas', font="Noto Sans"),
+            MarkupText(f'an <span fgcolor="#DC143C">Ideal Gas</span>?', font="Noto Sans")
+        ]
+        message = [
+            MarkupText(f'Particles take up', font="Noto Sans"),
+            MarkupText(f'zero space.', font="Noto Sans"),
+            MarkupText(f'Particles do not', font="Noto Sans"),
+            MarkupText(f'interact.', font="Noto Sans")
+        ]
+        numbers = [
+            MarkupText(f'1.', font="Noto Sans"),
+            MarkupText(f'2.', font="Noto Sans")
+        ]
+        ft[0].move_to([0, 0.5, 0])
+        ft[1].next_to(ft[0], DOWN)
+        self.play(Create(ft[0]), run_time=0.5)
+        self.play(Create(ft[1]), run_time=0.5)
+        self.wait(2)
+        hline = Line([-10, 2.25, 0], [10, 2.25, 0])
+        self.play(*[ApplyMethod(ft[k].shift, 3.00 * UP) for k in range(0, 2)], Create(hline))
+        numbers[0].move_to([-3, 1.00, 0])
+        numbers[1].next_to(numbers[0], 6.5 * DOWN)
+        message[0].next_to(numbers[0], RIGHT)
+        message[0].shift(DOWN * 5.0 / 128.0)
+        message[1].next_to(numbers[0], RIGHT + DOWN + (DOWN * 5.0 / 32.0))
+        message[2].next_to(numbers[1], RIGHT)
+        message[3].next_to(numbers[1], RIGHT + DOWN)
+        self.wait(5)
+        self.play(Create(numbers[0]), run_time=0.05)
+        self.play(Create(message[0]), run_time=0.70)
+        self.play(Create(message[1]), run_time=0.25)
+        self.wait(5)
+        self.play(Create(numbers[1]), run_time=0.05)
+        self.play(Create(message[2]), run_time=0.70)
+        self.play(Create(message[3]), run_time=0.25)
+        self.wait(5)
+
 rd.seed(127)

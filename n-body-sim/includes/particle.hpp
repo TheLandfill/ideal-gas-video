@@ -25,11 +25,11 @@ public:
 public:
 	Vector<N> x;
 	Vector<N> v;
+	real radius = 1.0;
+	real inverse_mass = 1.0;
 private:
 	Vector<N> last_x;
-	real radius = 1.0;
 	Vector<N> accumulated_force;
-	real inverse_mass = 1.0;
 };
 
 template<size_t N>
